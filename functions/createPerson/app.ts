@@ -1,14 +1,14 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
-import * as AWS from 'aws-sdk';
-import { SendMessageRequest } from 'aws-sdk/clients/sqs';
+import DynamoDB from 'aws-sdk/clients/dynamodb';
+import SQS, { SendMessageRequest } from 'aws-sdk/clients/sqs';
 import { v4 as uuidv4 } from 'uuid';
 import { PutItemInput } from './node_modules/aws-sdk/clients/dynamodb.d';
 import { Errors, Person } from './types';
 
 const table = process.env.TABLE as string;
 const queue = process.env.QUEUE as string;
-const dynamodb = new AWS.DynamoDB();
-const sqs = new AWS.SQS();
+const dynamodb = new DynamoDB();
+const sqs = new SQS();
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   let response: APIGatewayProxyResult;
