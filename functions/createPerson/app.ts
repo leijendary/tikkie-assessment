@@ -93,7 +93,7 @@ const send = async (id: string) => {
 };
 
 const save = async (person: Person) => {
-  const id = uuidv4();
+  const id = `PERSON#${uuidv4()}`;
   const params: PutItemInput = {
     TableName: table,
     Item: {

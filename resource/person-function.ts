@@ -1,6 +1,6 @@
-import { Duration, RemovalPolicy } from 'aws-cdk-lib';
+import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
@@ -9,13 +9,14 @@ import { Construct } from 'constructs';
 type PersonFunctionProps = {
   envName: string;
   api: RestApi;
+  table: Table;
 };
 
 export class PersonFunction extends Construct {
   envName: string;
   api: RestApi;
-  resource: Resource;
   table: Table;
+  resource: Resource;
   createQueue: Queue;
   createFunction: NodejsFunction;
 
@@ -24,9 +25,9 @@ export class PersonFunction extends Construct {
 
     this.envName = props.envName;
     this.api = props.api;
+    this.table = props.table;
 
     this.addApiResource();
-    this.createTable();
     this.createQueues();
     this.addCreateFunction();
   }
@@ -36,22 +37,6 @@ export class PersonFunction extends Construct {
    */
   private addApiResource() {
     this.resource = this.api.root.addResource('persons');
-  }
-
-  /**
-   * Create the person table
-   */
-  private createTable() {
-    this.table = new Table(this, `PersonTable-${this.envName}`, {
-      tableName: `Person-${this.envName}`,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      // For the sake of easy cleanup, i will put this here.
-      removalPolicy: RemovalPolicy.DESTROY,
-    });
   }
 
   /**
