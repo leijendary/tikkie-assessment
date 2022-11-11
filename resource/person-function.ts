@@ -82,7 +82,7 @@ export class PersonFunction extends Construct {
 
     const integration = new LambdaIntegration(this.createFunction);
 
-    // POST /persons will trigger this lambda
+    // Only POST /persons will trigger this lambda
     this.resource.addMethod('POST', integration);
 
     // Grant access to other services

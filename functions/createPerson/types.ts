@@ -3,7 +3,7 @@ export type Person = {
   lastName: string;
   phoneNumber: string;
   address: Address;
-}
+};
 
 export type Address = {
   street: string;
@@ -11,8 +11,10 @@ export type Address = {
   postCode: string;
   city: string;
   country: string;
-}
+};
 
-export type Errors = {
-  [key: string]: string
-}
+export type FieldError = {
+  code: string;
+  field: string;
+  message: string;
+};
