@@ -12,14 +12,12 @@ const dynamodb = new DynamoDB();
 const sqs = new SQS();
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  let response: APIGatewayProxyResult;
-
   try {
-    response = await processRequest(event);
+    return await processRequest(event);
   } catch (err) {
     console.log(err);
 
-    response = {
+    return {
       statusCode: 500,
       body: JSON.stringify({
         errors: [
@@ -31,8 +29,6 @@ export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<API
       }),
     };
   }
-
-  return response;
 };
 
 const processRequest = async (event: APIGatewayProxyEvent) => {
