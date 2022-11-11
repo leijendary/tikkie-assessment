@@ -55,7 +55,9 @@ export class PersonFunction extends Construct {
   }
 
   /**
-   * Add the createPerson function
+   * POST /persons
+   *
+   * Add the createPerson function that will only be triggered by the API call of POST /persons
    */
   private addCreateFunction() {
     this.createFunction = new NodejsFunction(this, `CreatePersonFunction-${this.envName}`, {
@@ -81,7 +83,9 @@ export class PersonFunction extends Construct {
   }
 
   /**
-   * Add the listPersons function
+   * GET /persons
+   *
+   * Add the listPersons function triggered by calling GET /persons
    */
   private addListFunction() {
     this.listFunction = new NodejsFunction(this, `ListPersonsFunction-${this.envName}`, {
