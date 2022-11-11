@@ -43,7 +43,11 @@ export class AssessmentStack extends Stack {
     this.table = new Table(this, `TikkieTable-${this.envName}`, {
       tableName: `Tikkie-${this.envName}`,
       partitionKey: {
-        name: 'id',
+        name: 'pk',
+        type: AttributeType.STRING,
+      },
+      sortKey: {
+        name: 'sk',
         type: AttributeType.STRING,
       },
       billingMode: BillingMode.PAY_PER_REQUEST,

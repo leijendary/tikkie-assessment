@@ -9,8 +9,7 @@
     "compile": "tsc"
   },
   "dependencies": {
-    "esbuild": "^0.14.14",
-    "uuid": "^9.0.0"
+    "esbuild": "^0.14.14"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.92",

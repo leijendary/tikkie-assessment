@@ -19,6 +19,7 @@ export class PersonFunction extends Construct {
   resource: Resource;
   createQueue: Queue;
   createFunction: NodejsFunction;
+  listFunction: NodejsFunction;
 
   constructor(scope: Construct, props: PersonFunctionProps) {
     super(scope, `PersonFunction-${props.envName}`);
@@ -30,6 +31,7 @@ export class PersonFunction extends Construct {
     this.addApiResource();
     this.createQueues();
     this.addCreateFunction();
+    this.addListFunction();
   }
 
   /**
@@ -73,5 +75,29 @@ export class PersonFunction extends Construct {
     // Grant access to other services
     this.table.grantReadWriteData(this.createFunction);
     this.createQueue.grantSendMessages(this.createFunction);
+  }
+
+  /**
+   * Add the listPersons function
+   */
+  private addListFunction() {
+    this.listFunction = new NodejsFunction(this, `ListPersonsFunction-${this.envName}`, {
+      functionName: `listPersons-${this.envName}`,
+      entry: 'functions/listPersons/app.ts',
+      handler: 'handler',
+      runtime: Runtime.NODEJS_16_X,
+      architecture: Architecture.ARM_64,
+      environment: {
+        TABLE: this.table.tableName,
+      },
+    });
+
+    const integration = new LambdaIntegration(this.listFunction);
+
+    // Only GET /persons will trigger this lambda
+    this.resource.addMethod('GET', integration);
+
+    // Grant read access to the table
+    this.table.grantReadData(this.listFunction);
   }
 }
