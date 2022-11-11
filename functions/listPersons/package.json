@@ -1,7 +1,7 @@
 {
-  "name": "create-person",
+  "name": "list-person",
   "version": "1.0.0",
-  "description": "Create a person Lambda trigger",
+  "description": "List existing persons Lambda trigger",
   "main": "app.js",
   "license": "MIT",
   "scripts": {
