@@ -2,6 +2,7 @@ import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
+import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Queue } from 'aws-cdk-lib/aws-sqs';
 import { Construct } from 'constructs';
@@ -20,6 +21,7 @@ export class PersonFunction extends Construct {
   createQueue: Queue;
   createFunction: NodejsFunction;
   listFunction: NodejsFunction;
+  onCreatedFunction: NodejsFunction;
 
   constructor(scope: Construct, props: PersonFunctionProps) {
     super(scope, `PersonFunction-${props.envName}`);
@@ -32,6 +34,7 @@ export class PersonFunction extends Construct {
     this.createQueues();
     this.addCreateFunction();
     this.addListFunction();
+    this.addOnCreatedFunction();
   }
 
   /**
@@ -99,5 +102,24 @@ export class PersonFunction extends Construct {
 
     // Grant read access to the table
     this.table.grantReadData(this.listFunction);
+  }
+
+  /**
+   * BONUS! Add the onPersonCreated function.
+   *
+   * Only triggered by the CreatePerson SQS queue.
+   */
+  private addOnCreatedFunction() {
+    this.onCreatedFunction = new NodejsFunction(this, `OnPersonCreatedFunction-${this.envName}`, {
+      functionName: `onPersonCreated-${this.envName}`,
+      entry: 'functions/onPersonCreated/app.ts',
+      handler: 'handler',
+      runtime: Runtime.NODEJS_16_X,
+      architecture: Architecture.ARM_64,
+    });
+
+    const source = new SqsEventSource(this.createQueue);
+
+    this.onCreatedFunction.addEventSource(source);
   }
 }
