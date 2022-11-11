@@ -86,6 +86,7 @@ const save = async (person: Person) => {
       pk,
       sk,
       ...person,
+      createdAt: new Date().toISOString(),
     },
   };
 
