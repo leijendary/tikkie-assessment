@@ -8,7 +8,7 @@ This is a simple assessment from Tikkie to create two APIs:
 
 The tech stack is really nice and i prefer this over long running servers. But of course, servers are useful in some cases.
 
-**_Written in TypeScript! 👏👏_**
+**_Written in TypeScript! 👏👏🍾_**
 
 # Folder structure
 
