@@ -31,3 +31,5 @@ Object.keys(envs).forEach((key) => {
     },
   });
 });
+
+app.synth();
