@@ -1,9 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
-import DynamoDB, { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 
 const table = process.env.TABLE as string;
 const pk = 'PERSON';
-const dynamodb = new DynamoDB.DocumentClient();
+const dynamodb = new DocumentClient();
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const { lastKey } = event.queryStringParameters ?? {};

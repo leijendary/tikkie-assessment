@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
-import DynamoDB, { DocumentClient } from 'aws-sdk/clients/dynamodb';
+import { DocumentClient } from 'aws-sdk/clients/dynamodb';
 import SQS, { SendMessageRequest } from 'aws-sdk/clients/sqs';
 import { v4 as uuidv4 } from 'uuid';
 import { Person } from './types';
@@ -8,7 +8,7 @@ import { required } from './validator';
 const table = process.env.TABLE as string;
 const queue = process.env.QUEUE as string;
 const pk = 'PERSON';
-const dynamodb = new DynamoDB.DocumentClient();
+const dynamodb = new DocumentClient();
 const sqs = new SQS();
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
