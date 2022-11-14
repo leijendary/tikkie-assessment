@@ -56,7 +56,7 @@ const processRequest = async (event: APIGatewayProxyEvent) => {
   ];
 
   // If the error array has errors, return the list of errors
-  if (errors.length > 0) {
+  if (errors.length) {
     return {
       statusCode: 400,
       body: JSON.stringify({
