@@ -15,8 +15,8 @@ The tech stack is really nice and i prefer this over long running servers. But o
 ```
 assessment
 │   README.md
-│   .example.env <-- copy this to .env and add your values
-│   .env <-- you should create this from .example.env
+│   .env.example <-- copy this to .env and add your values
+│   .env <-- you should create this from .env.example
 │
 └───bin
 │   assessment.ts <-- starting point of the app
@@ -58,7 +58,7 @@ All up to you.
 
 Currently, only `dev` and `prod` are written in `assessment.ts`. You could add more environments if you wish.
 
-You could add more account IDs by creating a copy of `.example.env` and naming it `.env`.
+You could add more account IDs by creating a copy of `.env.example` and naming it `.env`.
 
 As starting point, here is a sample `.env` file:
 
