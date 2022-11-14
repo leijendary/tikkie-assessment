@@ -55,8 +55,8 @@ const processRequest = async (event: APIGatewayProxyEvent) => {
     ...required('address', ['street', 'houseNumber', 'postCode', 'city', 'country'], person?.address),
   ];
 
-  // If the error object has keys in it, then it has errors. Return the error
-  if (Object.keys(errors).length > 0) {
+  // If the error array has errors, return the list of errors
+  if (errors.length > 0) {
     return {
       statusCode: 400,
       body: JSON.stringify({
