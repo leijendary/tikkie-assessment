@@ -89,10 +89,7 @@ PROD_AWS_REGION=
 List of packages installed on all lambda functions:
 
 - uuid
-
-Yes, just one. I try to keep this simple.
-
-For input validations, i prefer to use [zod](https://zod.dev/) due to it's typescript inference and ease of use. Since there are no actual validation rules, i just validated if a field is empty.
+- zod
 
 # API usage
 
