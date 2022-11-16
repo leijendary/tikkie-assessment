@@ -4,7 +4,7 @@ import { EnvNameProps } from '../types/env';
 
 type AppRestApiProps = RestApiProps & EnvNameProps;
 
-const defaults = {
+const defaults: RestApiProps = {
   endpointConfiguration: {
     types: [EndpointType.REGIONAL],
   },

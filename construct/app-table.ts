@@ -5,7 +5,7 @@ import { EnvNameProps } from './../types/env';
 
 type AppTableProps = EnvNameProps & Omit<TableProps, 'partitionKey'>;
 
-const defaults = {
+const defaults: TableProps = {
   partitionKey: {
     name: 'pk',
     type: AttributeType.STRING,
