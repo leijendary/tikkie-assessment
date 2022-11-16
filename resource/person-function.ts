@@ -1,11 +1,11 @@
-import { Duration } from 'aws-cdk-lib';
 import { LambdaIntegration, Resource, RestApi } from 'aws-cdk-lib/aws-apigateway';
 import { Table } from 'aws-cdk-lib/aws-dynamodb';
-import { Architecture, Runtime } from 'aws-cdk-lib/aws-lambda';
-import { SqsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
+import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
-import { Queue } from 'aws-cdk-lib/aws-sqs';
+import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
+import { AppTopic } from '../construct/app-topic';
+import { AppNodeJsFunction } from './../construct/app-nodejs-function';
 
 type PersonFunctionProps = {
   envName: string;
@@ -18,7 +18,7 @@ export class PersonFunction extends Construct {
   api: RestApi;
   table: Table;
   resource: Resource;
-  createQueue: Queue;
+  createTopic: Topic;
   createFunction: NodejsFunction;
   listFunction: NodejsFunction;
   onCreatedFunction: NodejsFunction;
@@ -48,9 +48,9 @@ export class PersonFunction extends Construct {
    * Create the queues needed for the events
    */
   private createQueues() {
-    this.createQueue = new Queue(this, `CreatePersonQueue-${this.envName}`, {
-      queueName: `CreatePerson-${this.envName}`,
-      retentionPeriod: Duration.days(1),
+    this.createTopic = new AppTopic(this, 'CreatePersonQueue', {
+      envName: this.envName,
+      topicName: 'person-created-event',
     });
   }
 
@@ -60,15 +60,13 @@ export class PersonFunction extends Construct {
    * Add the createPerson function that will only be triggered by the API call of POST /persons
    */
   private addCreateFunction() {
-    this.createFunction = new NodejsFunction(this, `CreatePersonFunction-${this.envName}`, {
-      functionName: `createPerson-${this.envName}`,
-      entry: 'functions/createPerson/app.ts',
-      handler: 'handler',
-      runtime: Runtime.NODEJS_16_X,
-      architecture: Architecture.ARM_64,
+    this.createFunction = new AppNodeJsFunction(this, 'CreatePersonFunction', {
+      envName: this.envName,
+      functionName: 'createPerson',
+      entry: 'lambda/createPerson/app.ts',
       environment: {
         TABLE: this.table.tableName,
-        QUEUE: this.createQueue.queueUrl,
+        TOPIC: this.createTopic.topicArn,
       },
     });
 
@@ -79,7 +77,7 @@ export class PersonFunction extends Construct {
 
     // Grant access to other services
     this.table.grantReadWriteData(this.createFunction);
-    this.createQueue.grantSendMessages(this.createFunction);
+    this.createTopic.grantPublish(this.createFunction);
   }
 
   /**
@@ -88,12 +86,10 @@ export class PersonFunction extends Construct {
    * Add the listPersons function triggered by calling GET /persons
    */
   private addListFunction() {
-    this.listFunction = new NodejsFunction(this, `ListPersonsFunction-${this.envName}`, {
-      functionName: `listPersons-${this.envName}`,
-      entry: 'functions/listPersons/app.ts',
-      handler: 'handler',
-      runtime: Runtime.NODEJS_16_X,
-      architecture: Architecture.ARM_64,
+    this.listFunction = new AppNodeJsFunction(this, 'ListPersonsFunction', {
+      envName: this.envName,
+      functionName: 'listPersons',
+      entry: 'lambda/listPersons/app.ts',
       environment: {
         TABLE: this.table.tableName,
       },
@@ -111,18 +107,16 @@ export class PersonFunction extends Construct {
   /**
    * BONUS! Add the onPersonCreated function.
    *
-   * Only triggered by the CreatePerson SQS queue.
+   * Only triggered by the person-created-event SNS.
    */
   private addOnCreatedFunction() {
-    this.onCreatedFunction = new NodejsFunction(this, `OnPersonCreatedFunction-${this.envName}`, {
-      functionName: `onPersonCreated-${this.envName}`,
-      entry: 'functions/onPersonCreated/app.ts',
-      handler: 'handler',
-      runtime: Runtime.NODEJS_16_X,
-      architecture: Architecture.ARM_64,
+    this.onCreatedFunction = new AppNodeJsFunction(this, 'OnPersonCreatedFunction', {
+      envName: this.envName,
+      functionName: 'onPersonCreated',
+      entry: 'lambda/onPersonCreated/app.ts',
     });
 
-    const source = new SqsEventSource(this.createQueue);
+    const source = new SnsEventSource(this.createTopic);
 
     this.onCreatedFunction.addEventSource(source);
   }

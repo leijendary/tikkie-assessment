@@ -1,8 +1,10 @@
-import { RemovalPolicy, Stack, StackProps } from 'aws-cdk-lib';
-import { EndpointType, RestApi } from 'aws-cdk-lib/aws-apigateway';
-import { AttributeType, BillingMode, Table } from 'aws-cdk-lib/aws-dynamodb';
+import { Stack, StackProps } from 'aws-cdk-lib';
+import { RestApi } from 'aws-cdk-lib/aws-apigateway';
+import { AttributeType, Table } from 'aws-cdk-lib/aws-dynamodb';
 import { Construct } from 'constructs';
 import { PersonFunction } from '../resource/person-function';
+import { AppRestApi } from './../construct/app-rest-api';
+import { AppTable } from './../construct/app-table';
 
 type AssessmentStackProps = StackProps & {
   envName: string;
@@ -25,14 +27,9 @@ export class AssessmentStack extends Stack {
   }
 
   private createApi() {
-    this.api = new RestApi(this, `AssessmentAPI-${this.envName}`, {
-      restApiName: `Assessment-${this.envName}`,
-      deployOptions: {
-        stageName: this.envName,
-      },
-      endpointConfiguration: {
-        types: [EndpointType.REGIONAL],
-      },
+    this.api = new AppRestApi(this, 'AssessmentAPI', {
+      envName: this.envName,
+      restApiName: 'assessment',
     });
   }
 
@@ -40,19 +37,20 @@ export class AssessmentStack extends Stack {
    * Create the tikkie table
    */
   private createTable() {
-    this.table = new Table(this, `TikkieTable-${this.envName}`, {
-      tableName: `Tikkie-${this.envName}`,
+    this.table = new AppTable(this, 'TikkieTable', {
+      envName: this.envName,
+      tableName: 'Tikkie',
+    });
+    this.table.addGlobalSecondaryIndex({
+      indexName: 'gsi1',
       partitionKey: {
-        name: 'pk',
+        name: 'gsi1pk',
         type: AttributeType.STRING,
       },
       sortKey: {
-        name: 'sk',
+        name: 'gsi1sk',
         type: AttributeType.STRING,
       },
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      // For the sake of easy cleanup, i will put this here.
-      removalPolicy: RemovalPolicy.DESTROY,
     });
   }
 

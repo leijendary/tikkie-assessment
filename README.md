@@ -4,7 +4,7 @@ This is a simple assessment from Tikkie to create two APIs:
 
 - Create person
 - List persons
-- (Bonus) trigger a lambda function from an SQS queue
+- (Bonus) trigger a lambda function from an SNS topic
 
 The tech stack is really nice and i prefer this over long running servers. But of course, servers are useful in some cases.
 
@@ -21,16 +21,31 @@ assessment
 └───bin
 │   assessment.ts <-- starting point of the app
 │
-└───functions
-│   │   createPerson <-- the function that can create a person
-│   │   listPersons <-- the function that can get the list of persons
-│   │   onPersonCreated <-- the function that is triggered by the CreatePerson queue
+└───construct
+│   app-nodejs-function.ts <-- the default construct for NodeJS functions
+│   app-rest-api.ts <-- the default construct for REST API gateway
+│   app-table.ts <-- the default construct for the DynamoDB tables
+│   app-topic.ts <-- the default construct for SNS topics
+│
+└───lambda
+│   │   createPerson <-- the lambda function that can create a person
+│   │   listPersons <-- the lambda function that can get the list of persons
+│   │   onPersonCreated <-- the lambda function that is called by person-created-event topic
 │
 └───lib
 │   assessment-stack.ts <-- starting point of the actual stack
 │
+└───notification
+│   topic-notification.ts <-- an abstraction to publish SNS topics
+│
+└───repository
+│   person-repository.ts <-- an abstraction to access person records
+│
 └───resource
-    person-function.ts <-- contains all the constructs for the /persons API
+│   person-function.ts <-- contains all the constructs for the /persons API
+│
+└───types <-- contains the data types
+└───utils <-- contains utility classes
 ```
 
 # Running the stack
