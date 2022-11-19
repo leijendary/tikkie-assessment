@@ -1,10 +1,9 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
-import topicNotification from '../../notification/topic-notification';
-import personRepository from '../../repository/person-repository';
-import { PersonInput, PersonInputSchema } from '../../types/person';
-import { successResponse } from '../../utils/response';
-import { serverErrorResponse, validationResponse } from './../../utils/response';
-import { validate } from './../../utils/validator';
+import topicNotification from '../notification/topic-notification';
+import personRepository from '../repository/person-repository';
+import { PersonInput, PersonInputSchema } from '../types/person';
+import { serverErrorResponse, successResponse, validationResponse } from '../utils/response';
+import { validate } from '../utils/validator';
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const validation = await validate<PersonInput>(event.body, PersonInputSchema);

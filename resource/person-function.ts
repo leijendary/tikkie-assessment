@@ -4,6 +4,7 @@ import { SnsEventSource } from 'aws-cdk-lib/aws-lambda-event-sources';
 import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import { Topic } from 'aws-cdk-lib/aws-sns';
 import { Construct } from 'constructs';
+import path from 'path';
 import { AppTopic } from '../construct/app-topic';
 import { AppNodeJsFunction } from './../construct/app-nodejs-function';
 
@@ -63,7 +64,7 @@ export class PersonFunction extends Construct {
     this.createFunction = new AppNodeJsFunction(this, 'CreatePersonFunction', {
       envName: this.envName,
       functionName: 'createPerson',
-      entry: 'lambda/createPerson/app.ts',
+      entry: path.join(__dirname, '../lambda/createPerson.ts'),
       environment: {
         TABLE: this.table.tableName,
         TOPIC: this.createTopic.topicArn,
@@ -89,7 +90,7 @@ export class PersonFunction extends Construct {
     this.listFunction = new AppNodeJsFunction(this, 'ListPersonsFunction', {
       envName: this.envName,
       functionName: 'listPersons',
-      entry: 'lambda/listPersons/app.ts',
+      entry: path.join(__dirname, '../lambda/listPersons.ts'),
       environment: {
         TABLE: this.table.tableName,
       },
@@ -113,7 +114,7 @@ export class PersonFunction extends Construct {
     this.onCreatedFunction = new AppNodeJsFunction(this, 'OnPersonCreatedFunction', {
       envName: this.envName,
       functionName: 'onPersonCreated',
-      entry: 'lambda/onPersonCreated/app.ts',
+      entry: path.join(__dirname, '../lambda/onPersonCreated.ts'),
     });
 
     const source = new SnsEventSource(this.createTopic);
