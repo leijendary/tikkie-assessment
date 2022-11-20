@@ -1,33 +1,39 @@
 import { ValidationError } from '../types/validation';
 
-export const successResponse = (data: any) => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
+export default class Response {
+  static success(data: any) {
+    const body = {
       ...data,
-    }),
-  };
-};
+    };
 
-export const validationResponse = (validation: ValidationError) => {
-  return {
-    statusCode: 400,
-    body: JSON.stringify({
+    return this.status(body);
+  }
+
+  static validation(validation: ValidationError) {
+    const body = {
       errors: validation.errors,
-    }),
-  };
-};
+    };
 
-export const serverErrorResponse = (err: unknown) => {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
+    return this.status(body, 400);
+  }
+
+  static serverError(err: unknown) {
+    const body = {
       errors: [
         {
           code: 'server',
           message: err instanceof Error ? err.message : 'Something went wrong. :(',
         },
       ],
-    }),
-  };
-};
+    };
+
+    return this.status(body, 500);
+  }
+
+  static status(body: unknown, statusCode: number = 200) {
+    return {
+      statusCode,
+      body: JSON.stringify(body),
+    };
+  }
+}

@@ -1,6 +1,6 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult, Handler } from 'aws-lambda';
 import personRepository from '../repository/person-repository';
-import { serverErrorResponse, successResponse } from '../utils/response';
+import Response from '../utils/response';
 
 export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
   const { lastKey } = event.queryStringParameters ?? {};
@@ -11,10 +11,10 @@ export const handler: Handler = async (event: APIGatewayProxyEvent): Promise<API
       startKey: lastKey,
     });
 
-    return successResponse(data);
+    return Response.success(data);
   } catch (err) {
     console.log(err);
 
-    return serverErrorResponse(err);
+    return Response.serverError(err);
   }
 };
